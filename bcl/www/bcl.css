@@ -1,0 +1,30 @@
+body {
+    background-color: #ffffa0
+}
+.titleimg {
+    height: 100px;
+}
+.col-sm-4 {
+    position: fixed;
+}
+.col-sm-8 {
+    position: absolute;
+    right: 0px;
+}
+.shiny-text-output {
+    color: #4400ff;
+}
+.title {
+    font-family: "Times New Roman", Times, serif;
+    color: #ff0080;
+    font-style: italic;
+}
+.row {
+    background-color: #f5ffcd
+    ;
+}
+.checkbox {
+    color: DodgerBlue;
+    text-align: inherit;
+    font-style: oblique;
+}
