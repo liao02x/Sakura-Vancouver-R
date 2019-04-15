@@ -28,10 +28,6 @@ sakura <- sakura %>% select(Cultivar,
 
 ui <- dashboardPage(
   dashboardHeader(title = "Sakura-Vancouver"),
-  #								tags$li(a(href='http://www.bcliquorstores.com',
-  #													tags$img(src='https://bit.ly/2ClIIHW',
-  #																	 height='30',width='60')),
-  #												class = "dropdown")),
   skin = "blue",
   dashboardSidebar(
   	width = '20vw',
@@ -125,14 +121,22 @@ server <- function(input, output) {
   		setView(lng = -123.1471137, lat = 49.2341169, zoom = 12)  %>% 
   		addTiles() %>% 
   		addCircleMarkers(data = filtered(), 
-  							 lat = ~Latitude, 
-  							 lng = ~Longitude, 
-  							 label = ~as.character(Location),
-  							 popup = ~as.character(Description),
-  							 color = ~pal(Popular),
-  							 radius = ~ifelse(Popular == "Favorate", 12, 6),
-  #							 clusterOptions = markerClusterOptions()
-  							 )
+  										 lat = ~Latitude, 
+  										 lng = ~Longitude, 
+  										 label = ~paste(
+  										 	Location,
+  										 	Cultivar,
+  										 sep = ", "),
+  										 popup = ~paste(paste("<img src =", PicLink, "width=300 height=200>"), 
+  										 								paste("<b>", Location, "<b/>"), 
+  										 							  paste("<b>", Cultivar, "<b/>"),
+  										 							  paste("<i>", Description, "<i/>"),
+  										 							  paste0(format(StartDate, "%m/%d"), "-", format(EndDate, "%m/%d")),
+  										 							 sep = "<br/>"),
+  										 color = ~pal(Popular),
+  										 radius = ~ifelse(Popular == "Favorate", 12, 6),
+  #										 clusterOptions = markerClusterOptions()
+  										 )
   })
   
   output$results <- DT::renderDataTable({

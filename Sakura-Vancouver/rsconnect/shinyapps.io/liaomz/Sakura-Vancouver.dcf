@@ -5,8 +5,8 @@ account: liaomz
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 863727
-bundleId: 2012155
+bundleId: 2012258
 url: https://liaomz.shinyapps.io/Sakura-Vancouver/
-when: 1555331982.40623
+when: 1555335815.89459
 asMultiple: FALSE
 asStatic: FALSE
