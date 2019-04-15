@@ -35,30 +35,35 @@ ui <- dashboardPage(
   skin = "blue",
   dashboardSidebar(
   	width = '20vw',
-  	sliderInput("dateInput", "Date", startdate, enddate, as.Date(c("2019-03-01", "2019-04-01"))),
-  	uiOutput("neighborhoodOutput"),
   	checkboxGroupInput("typeInput", "Popular",
   										 choices = c("Favorate", "Other"),
-  										 selected = "Favorate"),
+  										 selected = "Favorate",
+  										 inline = TRUE),
+  	uiOutput("neighborhoodOutput"),
+  	actionButton("selectAllNeighborhood", "Select all neighborhoods", value = TRUE),
   	uiOutput("cultivarOutput"),
-  	actionButton("selectAll", "Select all cultivars", value = FALSE),
+  	actionButton("selectAllCultivar", "Select all cultivars", value = TRUE),
   	br(), br(),
   	hr(),
   	span("Data source:", 
-  			 tags$a("OpenDataBC",
-  			 			 href = "https://www.opendatabc.ca/dataset/bc-liquor-store-product-price-list-current-prices")),
-  	br(),
-  	span("Built following this tutorial: ", 
-  			 a(href = "http://deanattali.com/blog/building-shiny-apps-tutorial/", "Building shiny apps tutorial")),
+  			 tags$a("http://maps.vcbf.ca/map/",
+  			 			 href = "http://maps.vcbf.ca/map/")),
   	br(), br(),
   	em(
   		span("Created by Minzhi Liao"),
   		HTML("&bull;"),
-  		span("Code", a(href = "https://github.com/STAT545-UBC-students/hw08-liao02x", "on GitHub"))
+  		span("Code", a(href = "https://github.com/liao02x/Sakura-Vancouver", "on GitHub"))
   	)
   ),
   
   dashboardBody(
+  	sliderInput("dateInput", 
+  							"Date", 
+  							startdate, 
+  							enddate, 
+  							c(Sys.Date(), min(enddate, Sys.Date() + 7)), 
+  							width = '100%',
+  							timeFormat = '%m/%d'),
   	tags$h3(tags$em(verbatimTextOutput("textresult"))),
   	hr(),
   	leafletOutput(outputId = "sakuraMap"), 
@@ -72,13 +77,17 @@ ui <- dashboardPage(
 server <- function(input, output) {
   filtered <- reactive({
     if (is.null(input$cultivarInput)) {
-      return(NULL)
-    }    
+      return(sakura)
+    }
+  	if (is.null(input$neighborhoodInput)) {
+  		return(sakura)
+  	}
     filtered <- sakura %>%
       filter(input$dateInput[1] <= EndDate, 
       			 StartDate <= input$dateInput[2],
       			 Popular %in% input$typeInput,
-             Cultivar %in% input$cultivarInput)
+             Cultivar %in% input$cultivarInput,
+      			 Neighborhood %in% input$neighborhoodInput)
     filtered
   })
   myplot <- reactive({
@@ -86,7 +95,7 @@ server <- function(input, output) {
       geom_histogram(bins = input$binsNumber)
   })
   output$cultivarOutput <- renderUI({
-    if (input$selectAll) {
+    if (input$selectAllCultivar) {
       selectInput("cultivarInput", "Cultivar",
                   sort(unique(sakura$Cultivar)),
                   selected = unique(sakura$Cultivar), multiple = TRUE)
@@ -98,7 +107,7 @@ server <- function(input, output) {
     }
   })
   output$neighborhoodOutput <- renderUI({
-  	if (input$selectAll) {
+  	if (input$selectAllNeighborhood) {
   		selectInput("neighborhoodInput", "Neighborhood",
   								sort(unique(sakura$Neighborhood)),
   								selected = unique(sakura$Neighborhood), multiple = TRUE)
@@ -127,8 +136,12 @@ server <- function(input, output) {
   })
   
   output$results <- DT::renderDataTable({
-    filtered()
-  })
+    filtered() %>%
+  		select(-ForumLink, 
+  					 -PicLink,
+  					 -Longitude,
+  					 -Latitude)
+  }, options = list(pageLength = 10))
   output$textresult <- renderText({
     paste(nrow(filtered()), 'option(s) found for you.')
   })
