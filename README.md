@@ -1,6 +1,6 @@
-# Sakura-Vancouver
+# Sakura-Vancouver-R
 
-Sakura-Vancouver provides a more interactive experience of [this website](http://maps.vcbf.ca/map/). 
+Sakura-Vancouver provides a more interactive experience of [this website](http://maps.vcbf.ca/map/) using R. 
 
 With Sakura-Vancouver, you can find an easier way of making your schedules to enjoy beautiful sakura of the Great Vancouver.
 
